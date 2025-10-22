@@ -1,0 +1,40 @@
+{
+  "websites": [
+    {
+      "name": "Google（接続テスト用）",
+      "url": "https://www.google.com",
+      "timeout": 10,
+      "expected_status": 200
+    },
+    {
+      "name": "GitHub（開発者向けサービス）",
+      "url": "https://github.com",
+      "timeout": 15,
+      "expected_status": 200
+    },
+    {
+      "name": "会社のWebサイト",
+      "url": "https://www.example.com",
+      "timeout": 10,
+      "expected_status": 200
+    },
+    {
+      "name": "APIエンドポイント",
+      "url": "https://api.example.com/health",
+      "timeout": 10,
+      "expected_status": 200
+    },
+    {
+      "name": "ローカル開発サーバー",
+      "url": "http://localhost:3000",
+      "timeout": 5,
+      "expected_status": 200
+    },
+    {
+      "name": "管理画面",
+      "url": "https://admin.example.com/login",
+      "timeout": 15,
+      "expected_status": 200
+    }
+  ]
+}

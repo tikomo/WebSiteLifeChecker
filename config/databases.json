@@ -1,0 +1,31 @@
+{
+  "databases": [
+    {
+      "name": "Production DB",
+      "host": "prod-db.example.com",
+      "port": 5432,
+      "database": "production",
+      "username": "monitor_user",
+      "password": "secure_password",
+      "sslmode": "require"
+    },
+    {
+      "name": "Staging DB",
+      "host": "staging-db.example.com",
+      "port": 5432,
+      "database": "staging",
+      "username": "monitor_user",
+      "password": "staging_password",
+      "sslmode": "prefer"
+    },
+    {
+      "name": "Azure PostgreSQL",
+      "host": "myserver.postgres.database.azure.com",
+      "port": 5432,
+      "database": "mydb",
+      "username": "admin@myserver",
+      "password": "azure_password",
+      "sslmode": "require"
+    }
+  ]
+}

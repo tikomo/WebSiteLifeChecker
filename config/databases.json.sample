@@ -1,0 +1,58 @@
+{
+  "databases": [
+    {
+      "name": "本番データベース",
+      "host": "prod-db.example.com",
+      "port": 5432,
+      "database": "production",
+      "username": "monitor_user",
+      "password": "your_secure_password_here",
+      "sslmode": "require"
+    },
+    {
+      "name": "ステージング環境",
+      "host": "staging-db.example.com",
+      "port": 5432,
+      "database": "staging",
+      "username": "monitor_user",
+      "password": "staging_password_here",
+      "sslmode": "prefer"
+    },
+    {
+      "name": "Azure PostgreSQL",
+      "host": "myserver.postgres.database.azure.com",
+      "port": 5432,
+      "database": "mydb",
+      "username": "admin@myserver",
+      "password": "azure_password_here",
+      "sslmode": "require"
+    },
+    {
+      "name": "AWS RDS PostgreSQL",
+      "host": "mydb.cluster-xyz.us-east-1.rds.amazonaws.com",
+      "port": 5432,
+      "database": "production",
+      "username": "dbuser",
+      "password": "aws_password_here",
+      "sslmode": "require"
+    },
+    {
+      "name": "ローカル開発DB",
+      "host": "localhost",
+      "port": 5432,
+      "database": "dev_db",
+      "username": "dev_user",
+      "password": "dev_password",
+      "sslmode": "disable"
+    },
+    {
+      "name": "Docker PostgreSQL",
+      "host": "localhost",
+      "port": 5433,
+      "database": "docker_db",
+      "username": "postgres",
+      "password": "docker_password",
+      "sslmode": "disable"
+    }
+  ]
+}

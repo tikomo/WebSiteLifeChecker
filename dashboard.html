@@ -1,0 +1,390 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ヘルスモニター - ステータスダッシュボード</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .header .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .status-up { color: #27ae60; }
+        .status-down { color: #e74c3c; }
+        .status-unknown { color: #f39c12; }
+        .status-shutdown { color: #95a5a6; }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .panel h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: 400;
+        }
+        
+        .service-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #ddd;
+        }
+        
+        .service-item.up { border-left-color: #27ae60; }
+        .service-item.down { border-left-color: #e74c3c; }
+        .service-item.unknown { border-left-color: #f39c12; }
+        .service-item.shutdown { border-left-color: #95a5a6; }
+        
+        .service-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .service-type {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .service-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .status-badge.up {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+        
+        .status-badge.down {
+            background: #fdeaea;
+            color: #e74c3c;
+        }
+        
+        .status-badge.unknown {
+            background: #fef9e7;
+            color: #f39c12;
+        }
+        
+        .status-badge.shutdown {
+            background: #f4f4f4;
+            color: #95a5a6;
+        }
+        
+        .response-time {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+        
+        .log-entry {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .log-timestamp {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        
+        .log-target {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .log-details {
+            font-size: 0.9em;
+            color: #5a6c7d;
+            word-break: break-word;
+        }
+        
+        .refresh-info {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 ヘルスモニター</h1>
+            <div class="subtitle">ステータスダッシュボード - 2025年10月21日 10:42:04</div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number status-up">2</div>
+                <div class="stat-label">正常稼働</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number status-down">4</div>
+                <div class="stat-label">障害発生</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Webサイト</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">データベース</div>
+            </div>
+        </div>
+        
+        <div class="main-grid">
+            <div class="panel">
+                <h2>🌐 現在のステータス</h2>
+
+                <div class="service-item down">
+                    <div>
+                        <div class="service-name">Azure PostgreSQL</div>
+                        <div class="service-type">database</div>
+                    </div>
+                    <div class="service-status">
+                        <span class="status-badge down">down</span>
+                        
+                    </div>
+                </div>
+
+                <div class="service-item down">
+                    <div>
+                        <div class="service-name">Company API</div>
+                        <div class="service-type">website</div>
+                    </div>
+                    <div class="service-status">
+                        <span class="status-badge down">down</span>
+                        
+                    </div>
+                </div>
+
+                <div class="service-item up">
+                    <div>
+                        <div class="service-name">GitHub</div>
+                        <div class="service-type">website</div>
+                    </div>
+                    <div class="service-status">
+                        <span class="status-badge up">up</span>
+                        <span class="response-time">(0.11s)</span>
+                    </div>
+                </div>
+
+                <div class="service-item up">
+                    <div>
+                        <div class="service-name">Google</div>
+                        <div class="service-type">website</div>
+                    </div>
+                    <div class="service-status">
+                        <span class="status-badge up">up</span>
+                        <span class="response-time">(0.27s)</span>
+                    </div>
+                </div>
+
+                <div class="service-item down">
+                    <div>
+                        <div class="service-name">Production DB</div>
+                        <div class="service-type">database</div>
+                    </div>
+                    <div class="service-status">
+                        <span class="status-badge down">down</span>
+                        
+                    </div>
+                </div>
+
+                <div class="service-item down">
+                    <div>
+                        <div class="service-name">Staging DB</div>
+                        <div class="service-type">database</div>
+                    </div>
+                    <div class="service-status">
+                        <span class="status-badge down">down</span>
+                        
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="panel">
+                <h2>📊 最新のログ</h2>
+
+                <div class="log-entry">
+                    <div class="log-timestamp">10:40:36</div>
+                    <div class="log-target">system - shutting_down->shutdown_complete</div>
+                    <div class="log-details">Graceful shutdown completed successfully</div>
+                </div>
+
+                <div class="log-entry">
+                    <div class="log-timestamp">10:40:31</div>
+                    <div class="log-target">Azure PostgreSQL - down->shutdown</div>
+                    <div class="log-details">Application shutdown - final status recorded</div>
+                </div>
+
+                <div class="log-entry">
+                    <div class="log-timestamp">10:40:31</div>
+                    <div class="log-target">Staging DB - down->shutdown</div>
+                    <div class="log-details">Application shutdown - final status recorded</div>
+                </div>
+
+                <div class="log-entry">
+                    <div class="log-timestamp">10:40:31</div>
+                    <div class="log-target">Production DB - down->shutdown</div>
+                    <div class="log-details">Application shutdown - final status recorded</div>
+                </div>
+
+                <div class="log-entry">
+                    <div class="log-timestamp">10:40:31</div>
+                    <div class="log-target">Company API - down->shutdown</div>
+                    <div class="log-details">Application shutdown - final status recorded</div>
+                </div>
+
+                <div class="log-entry">
+                    <div class="log-timestamp">10:40:31</div>
+                    <div class="log-target">Google - up->shutdown</div>
+                    <div class="log-details">Application shutdown - final status recorded</div>
+                </div>
+
+                <div class="log-entry">
+                    <div class="log-timestamp">10:40:31</div>
+                    <div class="log-target">GitHub - up->shutdown</div>
+                    <div class="log-details">Application shutdown - final status recorded</div>
+                </div>
+
+                <div class="log-entry">
+                    <div class="log-timestamp">10:40:31</div>
+                    <div class="log-target">system - running->shutting_down</div>
+                    <div class="log-details">Graceful shutdown initiated</div>
+                </div>
+
+                <div class="log-entry">
+                    <div class="log-timestamp">10:40:31</div>
+                    <div class="log-target">system - running->error</div>
+                    <div class="log-details">ヘルスチェック実行中にエラーが発生しました: 'StatusDisplay' object has no attribute 'display_status'</div>
+                </div>
+
+                <div class="log-entry">
+                    <div class="log-timestamp">10:40:31</div>
+                    <div class="log-target">Azure PostgreSQL - down</div>
+                    <div class="log-details">Error: Database health check failed: Connection timeout: connection to server at "myserver.postgres....</div>
+                </div>
+
+            </div>
+        </div>
+        
+        <div class="refresh-info">
+            このダッシュボードは手動で更新されます。最新の情報を確認するには、ログビューアーを再実行してください。
+        </div>
+    </div>
+</body>
+</html>

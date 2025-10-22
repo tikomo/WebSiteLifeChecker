@@ -1,0 +1,22 @@
+{
+  "websites": [
+    {
+      "name": "Google",
+      "url": "https://www.google.com",
+      "timeout": 10,
+      "expected_status": 200
+    },
+    {
+      "name": "GitHub",
+      "url": "https://github.com",
+      "timeout": 15,
+      "expected_status": 200
+    },
+    {
+      "name": "Company API",
+      "url": "https://api.example.com/health",
+      "timeout": 10,
+      "expected_status": 200
+    }
+  ]
+}
